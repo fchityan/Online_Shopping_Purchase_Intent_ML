@@ -4,4 +4,5 @@ scikit-learn==1.7.2
 matplotlib==3.10.6
 seaborn==0.13.2
 SQLAlchemy==2.0.43
+pytest==8.4.2
 # sqlite3 is part of Python standard library and does not need to be listed here.
