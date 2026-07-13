@@ -21,7 +21,7 @@ The pipeline is designed for imbalanced classification, so it tracks both rankin
 online_shopping_purchase_intent_ml/
 |-- README.md
 |-- requirements.txt
-|-- eda.ipynb
+|-- online_shopping_purchase_intent_ml.ipynb
 |-- outputs/
 |   |-- feature_importance.csv
 |   |-- summary.json
@@ -145,4 +145,4 @@ The tuned threshold improves recall and F1, which is often preferable in imbalan
 - Missing values are handled during loading and preprocessing.
 - Threshold tuning is based on validation-set F1.
 - The final evaluation is performed on a held-out test split.
-- `eda.ipynb` contains exploratory analysis and supporting observations.
+- `online_shopping_purchase_intent_ml.ipynb` contains exploratory analysis and supporting observations.
