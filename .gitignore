@@ -1,0 +1,18 @@
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+
+# Test caches
+.pytest_cache/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Local MLflow tracking stores
+mlruns/
+mlruns_purchase_intent/
+mlops/
+
+# Local outputs and artifacts
+outputs/

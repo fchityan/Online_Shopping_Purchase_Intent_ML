@@ -186,6 +186,21 @@ The project now includes a lightweight monitoring layer with the following first
 
 These outputs are designed as a practical starting point for ongoing monitoring and business evaluation rather than a full production observability stack.
 
+## Readable MLflow Folder View
+
+MLflow stores experiments and runs using internal IDs (for example `0`, `145447...`, and long run UUIDs). Renaming those folders directly can break MLflow metadata.
+
+To get human-readable names safely, generate a symlinked readable view:
+
+```bash
+python -m src.build_mlruns_readable_view
+```
+
+This creates [mlops](mlops) with friendly names such as:
+
+- `experiment__purchase_intent_lightgbm__id_145447...`
+- `run__<start_time>__lgbm_baseline_threshold_0_35_seed_42__id_<run_id>`
+
 ## Deployment Considerations
 
 - Validate the incoming scoring schema so feature names, data types, and categorical formats match the training pipeline.

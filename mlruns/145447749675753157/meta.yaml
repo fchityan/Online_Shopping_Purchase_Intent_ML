@@ -1,6 +1,0 @@
-artifact_location: file:///workspaces/Online_Shopping_Purchase_Intent_ML/mlruns/145447749675753157
-creation_time: 1786106811363
-experiment_id: '145447749675753157'
-last_update_time: 1786106811363
-lifecycle_stage: active
-name: purchase-intent-lightgbm
