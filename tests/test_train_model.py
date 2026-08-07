@@ -7,7 +7,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
-from src.train_model import get_feature_importance, get_models, parse_args, tune_threshold_for_f1
+from src.train_model import (
+    get_feature_importance,
+    get_models,
+    make_readable_run_name,
+    parse_args,
+    tune_threshold_for_f1,
+)
 
 
 def test_tune_threshold_for_f1_returns_best_threshold_and_sorted_results():
@@ -33,6 +39,14 @@ def test_parse_args_includes_mlflow_options():
 
     assert args.mlflow_tracking_uri == 'file:./mlruns_purchase_intent'
     assert args.experiment_name == 'purchase-intent-lightgbm'
+
+
+def test_make_readable_run_name_is_human_friendly():
+    run_name = make_readable_run_name('lgbm_baseline', 0.35, 42)
+
+    assert 'lgbm_baseline' in run_name
+    assert 'threshold' in run_name
+    assert 'seed-42' in run_name
 
 
 def test_get_feature_importance_returns_empty_frame_for_models_without_importances():

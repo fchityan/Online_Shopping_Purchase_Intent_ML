@@ -1,6 +1,7 @@
 """End-to-end ML pipeline for purchase intent prediction."""
 import argparse
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
@@ -110,6 +111,24 @@ def get_feature_importance(final_clf: Pipeline, num_cols: List[str], cat_cols: L
     ).sort_values('importance', ascending=False).reset_index(drop=True)
 
 
+def make_slug(value: str) -> str:
+    """Create a filesystem-safe, human-readable slug from a label."""
+    return re.sub(r'[^a-z0-9]+', '_', value.lower()).strip('_')
+
+
+def make_readable_run_name(model_name: str, threshold: float, random_state: int) -> str:
+    """Generate a clear, human-readable run name for MLflow."""
+    return f'{model_name}-threshold-{threshold:.2f}-seed-{random_state}'
+
+
+def resolve_artifact_location(tracking_uri: str, experiment_name: str) -> str:
+    """Build a clear artifact location path for the MLflow experiment."""
+    tracking_path = Path(tracking_uri.replace('file:', '', 1)).resolve()
+    artifact_dir = tracking_path / 'artifacts' / make_slug(experiment_name)
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    return f'file:{artifact_dir}'
+
+
 def parse_args(args=None):
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description='Run end-to-end purchase intent ML pipeline.')
@@ -125,8 +144,16 @@ def run(config: PipelineConfig):
     """Execute the full ML pipeline."""
     config.output_dir.mkdir(parents=True, exist_ok=True)
 
-    mlflow.set_tracking_uri(args.mlflow_tracking_uri if 'args' in globals() else 'file:./mlruns_purchase_intent')
-    mlflow.set_experiment(args.experiment_name if 'args' in globals() else 'purchase-intent-lightgbm')
+    tracking_uri = args.mlflow_tracking_uri if 'args' in globals() else 'file:./mlruns_purchase_intent'
+    experiment_name = args.experiment_name if 'args' in globals() else 'purchase-intent-lightgbm'
+
+    mlflow.set_tracking_uri(tracking_uri)
+    mlflow.set_experiment(experiment_name)
+
+    experiment = mlflow.get_experiment_by_name(experiment_name)
+    if experiment is None:
+        mlflow.create_experiment(experiment_name, artifact_location=resolve_artifact_location(tracking_uri, experiment_name))
+        mlflow.set_experiment(experiment_name)
 
     raw = load_raw_data(config.data_path)
     data = domain_clean(raw)
@@ -173,20 +200,23 @@ def run(config: PipelineConfig):
     val_df = pd.DataFrame(val_records).sort_values('auc', ascending=False).reset_index(drop=True)
     best_model_name = val_df.iloc[0]['model']
 
-    with mlflow.start_run(run_name=f"{best_model_name}-{config.random_state}"):
+    best_threshold, threshold_df = tune_threshold_for_f1(
+        y_true=y_val,
+        proba=validation_probabilities[best_model_name],
+        start=config.threshold_grid_start,
+        stop=config.threshold_grid_stop,
+        step=config.threshold_grid_step,
+    )
+
+    readable_run_name = make_readable_run_name(best_model_name, best_threshold, config.random_state)
+    with mlflow.start_run(run_name=readable_run_name):
         mlflow.log_param('data_path', str(config.data_path))
         mlflow.log_param('random_state', config.random_state)
         mlflow.log_param('test_size', config.test_size)
         mlflow.log_param('val_size_within_trainval', config.val_size_within_trainval)
         mlflow.log_param('best_model', best_model_name)
-
-        best_threshold, threshold_df = tune_threshold_for_f1(
-            y_true=y_val,
-            proba=validation_probabilities[best_model_name],
-            start=config.threshold_grid_start,
-            stop=config.threshold_grid_stop,
-            step=config.threshold_grid_step,
-        )
+        mlflow.set_tag('run_label', readable_run_name)
+        mlflow.set_tag('experiment_label', experiment_name)
 
         final_model = models[best_model_name]
         final_clf = Pipeline([
