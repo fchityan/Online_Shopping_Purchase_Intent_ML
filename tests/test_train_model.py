@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
+from lightgbm import LGBMClassifier
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
-from src.train_model import get_feature_importance, tune_threshold_for_f1
+from src.train_model import get_feature_importance, get_models, parse_args, tune_threshold_for_f1
 
 
 def test_tune_threshold_for_f1_returns_best_threshold_and_sorted_results():
@@ -18,6 +19,20 @@ def test_tune_threshold_for_f1_returns_best_threshold_and_sorted_results():
     assert best_threshold == 0.6000000000000001
     assert threshold_df.iloc[0]['f1'] >= threshold_df.iloc[-1]['f1']
     assert set(threshold_df.columns) == {'threshold', 'f1', 'precision', 'recall', 'accuracy'}
+
+
+def test_get_models_includes_lightgbm_classifier():
+    models = get_models(random_state=42)
+
+    assert 'lgbm_baseline' in models
+    assert isinstance(models['lgbm_baseline'], LGBMClassifier)
+
+
+def test_parse_args_includes_mlflow_options():
+    args = parse_args([])
+
+    assert args.mlflow_tracking_uri == 'file:./mlruns'
+    assert args.experiment_name == 'purchase-intent-lightgbm'
 
 
 def test_get_feature_importance_returns_empty_frame_for_models_without_importances():

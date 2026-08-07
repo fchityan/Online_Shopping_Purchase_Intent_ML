@@ -15,6 +15,8 @@ The pipeline is designed for imbalanced classification, so it tracks both rankin
 - Accuracy
 - Confusion matrix
 
+It also now includes a lightweight monitoring layer for drift, data quality, weekly performance reporting, and a simple business-impact summary.
+
 ## Project Structure
 
 ```text
@@ -57,7 +59,7 @@ online_shopping_purchase_intent_ml/
 The training script currently compares these classifiers:
 
 - Logistic Regression
-- Gradient Boosting Classifier
+- LightGBM Classifier
 - Random Forest Classifier
 
 ## Installation
@@ -75,7 +77,7 @@ pip install -r requirements.txt
 Run the full training and evaluation pipeline:
 
 ```bash
-python -m src.train_model --data-path online_shopping --output-dir outputs --random-state 42
+python -m src.train_model --data-path online_shopping.csv --output-dir outputs --random-state 42 --mlflow-tracking-uri file:./mlruns --experiment-name purchase-intent-lightgbm
 ```
 
 Arguments:
@@ -83,6 +85,8 @@ Arguments:
 - `--data-path`: path to the input CSV dataset
 - `--output-dir`: directory for generated metrics and artifacts
 - `--random-state`: random seed for reproducibility
+- `--mlflow-tracking-uri`: location for MLflow experiment tracking
+- `--experiment-name`: MLflow experiment name
 
 ## Tests
 
@@ -92,7 +96,40 @@ Run the test suite with:
 pytest
 ```
 
-The tests cover data loading, preprocessing, evaluation, and selected training helpers.
+The tests cover data loading, preprocessing, evaluation, selected training helpers, and the new inference API scaffolding.
+
+## Production-Ready Starter Components
+
+This repository now includes a lightweight production-ready foundation:
+
+- A prediction API entry point in [app.py](app.py)
+- A reusable inference module in [src/inference.py](src/inference.py)
+- A Docker image in [Dockerfile](Dockerfile)
+- A CI workflow in [.github/workflows/ci.yml](.github/workflows/ci.yml)
+
+### Run the API locally
+
+```bash
+uvicorn app:app --reload
+```
+
+Then open the Swagger docs at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### Build the Docker image
+
+```bash
+docker build -t purchase-intent-api .
+```
+
+### Run the Docker container
+
+```bash
+docker run -p 8000:8000 purchase-intent-api
+```
 
 `tests/conftest.py` is included so `pytest` can import the top-level `src` package reliably in this repo layout.
 
@@ -106,28 +143,48 @@ After a successful run, the pipeline writes these files to `outputs/`:
 - `threshold_tuning.csv`: threshold search results for the selected model
 - `feature_importance.csv`: feature importances when supported by the final model
 - `summary.json`: run summary, split sizes, selected model, threshold, and final test metrics
+- `weekly_performance_summary.csv`: simple weekly performance summary table
+- `data_quality_alerts.json`: basic missingness and invalid-range alerts
+- `drift_report.json`: simple drift summary for numeric and categorical features
+- `business_impact.csv`: simple business-impact view showing targeted vs non-targeted conversion behavior
 
 ## Reported Performance
 
-Current reported test metrics:
+The pipeline now uses LightGBM as the boosted-tree baseline. The latest run is summarized below.
+
+### Compared with the previous Gradient Boosting baseline
+
+- Previous best Gradient Boosting baseline: AUC 0.8891, F1 0.5982, Precision 0.7071, Recall 0.5183, Accuracy 0.8921
+- New LightGBM-based pipeline: AUC 0.9253, F1 0.6933, Precision 0.7986, Recall 0.6126, Accuracy 0.9161 at the default threshold of 0.50
 
 ### Default threshold: 0.50
 
-- AUC: 0.8891
-- F1: 0.5982
-- Precision: 0.7071
-- Recall: 0.5183
-- Accuracy: 0.8921
+- AUC: 0.9253
+- F1: 0.6933
+- Precision: 0.7986
+- Recall: 0.6126
+- Accuracy: 0.9161
 
-### Tuned threshold: 0.25
+### Tuned threshold: 0.35
 
-- AUC: 0.8891
-- F1: 0.6277
-- Precision: 0.5580
-- Recall: 0.7173
-- Accuracy: 0.8682
+- AUC: 0.9253
+- F1: 0.6799
+- Precision: 0.6900
+- Recall: 0.6702
+- Accuracy: 0.9023
 
 The tuned threshold improves recall and F1, which is often preferable in imbalanced purchase-intent classification.
+
+## Monitoring and Business Evaluation
+
+The project now includes a lightweight monitoring layer with the following first-version checks:
+
+- Drift checks for key numerical and categorical features such as `PageValue`, `BounceRate`, `ExitRate`, and `CustomerType`
+- Basic data quality alerts for missing values and out-of-range bounded features
+- A simple weekly performance summary table for tracking accuracy, precision, recall, and F1
+- A business-impact table that summarizes targeted versus non-targeted conversion rates
+
+These outputs are designed as a practical starting point for ongoing monitoring and business evaluation rather than a full production observability stack.
 
 ## Deployment Considerations
 
