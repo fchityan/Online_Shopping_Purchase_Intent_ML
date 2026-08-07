@@ -150,7 +150,19 @@ After a successful run, the pipeline writes these files to `outputs/`:
 
 ## Reported Performance
 
-The LightGBM-based pipeline is summarized below.
+Validation performance at threshold 0.50 for the three candidate models is:
+
+| Model | AUC | F1 | Precision | Recall | Accuracy |
+|---|---:|---:|---:|---:|---:|
+| LightGBM | 0.9230 | 0.6922 | 0.7886 | 0.6168 | 0.9152 |
+| Random Forest | 0.9203 | 0.6842 | 0.8340 | 0.5801 | 0.9173 |
+| Logistic Regression | 0.8599 | 0.5361 | 0.7761 | 0.4094 | 0.8905 |
+
+Best model selection:
+
+- We choose **LightGBM** because it has the highest validation AUC and F1, giving the strongest overall ranking quality and class balance.
+- Random Forest is competitive, but its lower recall means more missed purchasing sessions.
+- Logistic Regression underperforms on both AUC and F1, which suggests it is not flexible enough for the observed nonlinear behavior.
 
 ### Default threshold: 0.50
 

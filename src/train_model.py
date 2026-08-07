@@ -63,6 +63,49 @@ def get_models(random_state: int) -> Dict[str, object]:
     }
 
 
+def get_model_display_name(model_name: str) -> str:
+    """Return a human-readable model name for reporting."""
+    labels = {
+        'logreg_baseline': 'Logistic Regression',
+        'lgbm_baseline': 'LightGBM',
+        'rf_baseline': 'Random Forest',
+    }
+    return labels.get(model_name, model_name)
+
+
+def build_model_selection_reason(best_model_name: str, val_df: pd.DataFrame) -> str:
+    """Build a concise explanation for why the selected model was chosen."""
+    best_row = val_df[val_df['model'] == best_model_name].iloc[0]
+    reason_parts = [
+        (
+            f"{get_model_display_name(best_model_name)} was selected as the best model because "
+            f"it achieved the highest validation AUC ({best_row['auc']:.4f}) at threshold 0.50."
+        )
+    ]
+
+    rf_row = val_df[val_df['model'] == 'rf_baseline']
+    if not rf_row.empty:
+        rf_values = rf_row.iloc[0]
+        reason_parts.append(
+            (
+                f"Random Forest delivered strong precision ({rf_values['precision']:.4f}) but lower recall "
+                f"({rf_values['recall']:.4f}) and AUC ({rf_values['auc']:.4f}), which reduces captured purchasers."
+            )
+        )
+
+    logreg_row = val_df[val_df['model'] == 'logreg_baseline']
+    if not logreg_row.empty:
+        logreg_values = logreg_row.iloc[0]
+        reason_parts.append(
+            (
+                f"Logistic Regression trailed on AUC ({logreg_values['auc']:.4f}) and F1 "
+                f"({logreg_values['f1']:.4f}), indicating weaker overall ranking and class balance."
+            )
+        )
+
+    return ' '.join(reason_parts)
+
+
 def fit_and_score_model(name: str, model, preprocessor, X_fit, y_fit, X_eval, y_eval, threshold: float = 0.5):
     """Train model and evaluate on validation set."""
     clf = Pipeline([
@@ -199,6 +242,19 @@ def run(config: PipelineConfig):
 
     val_df = pd.DataFrame(val_records).sort_values('auc', ascending=False).reset_index(drop=True)
     best_model_name = val_df.iloc[0]['model']
+    validation_model_comparison = [
+        {
+            'model_key': row['model'],
+            'model_name': get_model_display_name(row['model']),
+            'auc': float(row['auc']),
+            'f1': float(row['f1']),
+            'precision': float(row['precision']),
+            'recall': float(row['recall']),
+            'accuracy': float(row['accuracy']),
+        }
+        for _, row in val_df.iterrows()
+    ]
+    model_selection_reason = build_model_selection_reason(best_model_name, val_df)
 
     best_threshold, threshold_df = tune_threshold_for_f1(
         y_true=y_val,
@@ -244,6 +300,9 @@ def run(config: PipelineConfig):
             },
             'feature_types': {'categorical': cat_cols, 'numerical': num_cols},
             'best_model': best_model_name,
+            'best_model_name': get_model_display_name(best_model_name),
+            'validation_model_comparison_0.50': validation_model_comparison,
+            'model_selection_reason': model_selection_reason,
             'best_threshold_by_f1': best_threshold,
             'test_default_0.50': test_default,
             'test_tuned': test_tuned,
