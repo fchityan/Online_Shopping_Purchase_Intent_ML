@@ -116,7 +116,7 @@ def parse_args(args=None):
     parser.add_argument('--data-path', type=str, default='online_shopping.csv', help='Path to CSV-formatted dataset file.')
     parser.add_argument('--output-dir', type=str, default='outputs', help='Directory to save pipeline artifacts.')
     parser.add_argument('--random-state', type=int, default=42, help='Random seed for split/model reproducibility.')
-    parser.add_argument('--mlflow-tracking-uri', type=str, default='file:./mlruns', help='MLflow tracking URI.')
+    parser.add_argument('--mlflow-tracking-uri', type=str, default='file:./mlruns_purchase_intent', help='MLflow tracking URI.')
     parser.add_argument('--experiment-name', type=str, default='purchase-intent-lightgbm', help='MLflow experiment name.')
     return parser.parse_args(args)
 
@@ -125,7 +125,7 @@ def run(config: PipelineConfig):
     """Execute the full ML pipeline."""
     config.output_dir.mkdir(parents=True, exist_ok=True)
 
-    mlflow.set_tracking_uri(args.mlflow_tracking_uri if 'args' in globals() else 'file:./mlruns')
+    mlflow.set_tracking_uri(args.mlflow_tracking_uri if 'args' in globals() else 'file:./mlruns_purchase_intent')
     mlflow.set_experiment(args.experiment_name if 'args' in globals() else 'purchase-intent-lightgbm')
 
     raw = load_raw_data(config.data_path)

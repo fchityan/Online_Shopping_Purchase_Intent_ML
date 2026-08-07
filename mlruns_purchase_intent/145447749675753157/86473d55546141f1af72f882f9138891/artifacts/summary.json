@@ -1,0 +1,61 @@
+{
+  "data_shape": {
+    "rows": 12330,
+    "columns": 9
+  },
+  "split_shape": {
+    "train_rows": 7398,
+    "val_rows": 2466,
+    "test_rows": 2466
+  },
+  "feature_types": {
+    "categorical": [
+      "CustomerType",
+      "TrafficSource",
+      "GeographicRegion"
+    ],
+    "numerical": [
+      "SpecialDayProximity",
+      "ExitRate",
+      "PageValue",
+      "BounceRate",
+      "ProductPageTime"
+    ]
+  },
+  "best_model": "lgbm_baseline",
+  "best_threshold_by_f1": 0.3500000000000001,
+  "test_default_0.50": {
+    "auc": 0.9253047401794778,
+    "f1": 0.6933333333333334,
+    "precision": 0.7986348122866894,
+    "recall": 0.612565445026178,
+    "accuracy": 0.916058394160584,
+    "cm": [
+      [
+        2025,
+        59
+      ],
+      [
+        148,
+        234
+      ]
+    ]
+  },
+  "test_tuned": {
+    "auc": 0.9253047401794778,
+    "f1": 0.6799468791500664,
+    "precision": 0.6900269541778976,
+    "recall": 0.6701570680628273,
+    "accuracy": 0.9022708840227088,
+    "cm": [
+      [
+        1969,
+        115
+      ],
+      [
+        126,
+        256
+      ]
+    ]
+  }
+}

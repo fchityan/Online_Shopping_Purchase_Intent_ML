@@ -77,7 +77,7 @@ pip install -r requirements.txt
 Run the full training and evaluation pipeline:
 
 ```bash
-python -m src.train_model --data-path online_shopping.csv --output-dir outputs --random-state 42 --mlflow-tracking-uri file:./mlruns --experiment-name purchase-intent-lightgbm
+python -m src.train_model --data-path online_shopping.csv --output-dir outputs --random-state 42 --mlflow-tracking-uri file:./mlruns_purchase_intent --experiment-name purchase-intent-lightgbm
 ```
 
 Arguments:

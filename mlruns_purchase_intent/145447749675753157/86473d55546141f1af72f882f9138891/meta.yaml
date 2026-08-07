@@ -1,0 +1,15 @@
+artifact_uri: file:///workspaces/Online_Shopping_Purchase_Intent_ML/mlruns/145447749675753157/86473d55546141f1af72f882f9138891/artifacts
+end_time: 1786107536869
+entry_point_name: ''
+experiment_id: '145447749675753157'
+lifecycle_stage: active
+run_id: 86473d55546141f1af72f882f9138891
+run_name: lgbm_baseline-42
+run_uuid: 86473d55546141f1af72f882f9138891
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1786107529895
+status: 3
+tags: []
+user_id: codespace

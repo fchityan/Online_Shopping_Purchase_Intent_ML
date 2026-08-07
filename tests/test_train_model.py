@@ -31,7 +31,7 @@ def test_get_models_includes_lightgbm_classifier():
 def test_parse_args_includes_mlflow_options():
     args = parse_args([])
 
-    assert args.mlflow_tracking_uri == 'file:./mlruns'
+    assert args.mlflow_tracking_uri == 'file:./mlruns_purchase_intent'
     assert args.experiment_name == 'purchase-intent-lightgbm'
 
 
