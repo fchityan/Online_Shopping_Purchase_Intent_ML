@@ -150,12 +150,7 @@ After a successful run, the pipeline writes these files to `outputs/`:
 
 ## Reported Performance
 
-The pipeline now uses LightGBM as the boosted-tree baseline. The latest run is summarized below.
-
-### Compared with the previous Gradient Boosting baseline
-
-- Previous best Gradient Boosting baseline: AUC 0.8891, F1 0.5982, Precision 0.7071, Recall 0.5183, Accuracy 0.8921
-- New LightGBM-based pipeline: AUC 0.9253, F1 0.6933, Precision 0.7986, Recall 0.6126, Accuracy 0.9161 at the default threshold of 0.50
+The LightGBM-based pipeline is summarized below.
 
 ### Default threshold: 0.50
 
