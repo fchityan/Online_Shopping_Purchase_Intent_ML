@@ -6,6 +6,20 @@ An end-to-end machine learning pipeline for predicting customer purchase intent 
 
 This project builds and evaluates a binary classification pipeline for purchase intent prediction. The workflow covers data loading, domain-aware cleaning, preprocessing, model selection, threshold tuning, and final evaluation on a held-out test set.
 
+Yes, this is a full machine learning pipeline for practical, end-to-end ML workflow coverage in a single repository.
+
+This project includes the full core pipeline stages:
+
+- data ingestion and validation
+- preprocessing and feature handling
+- model training and selection
+- threshold tuning and offline evaluation
+- experiment tracking with MLflow
+- inference serving API and containerization
+- lightweight monitoring outputs (drift, data quality, weekly metrics, business impact)
+
+This is best described as a strong "full ML pipeline starter" rather than a complete enterprise MLOps platform. It does not yet include automated retraining orchestration, online monitoring infrastructure, model registry promotion flows, or CI/CD deployment automation across environments.
+
 The pipeline is designed for imbalanced classification, so it tracks both ranking quality and business-facing classification metrics:
 
 - AUC
@@ -21,23 +35,36 @@ It also now includes a lightweight monitoring layer for drift, data quality, wee
 
 ```text
 online_shopping_purchase_intent_ml/
+|-- app.py
+|-- Dockerfile
 |-- README.md
 |-- requirements.txt
 |-- online_shopping_purchase_intent_ml.ipynb
+|-- mlruns_readable_view/
 |-- outputs/
+|   |-- business_impact.csv
+|   |-- data_quality_alerts.json
+|   |-- drift_report.json
 |   |-- feature_importance.csv
 |   |-- summary.json
 |   |-- threshold_tuning.csv
-|   `-- validation_metrics.csv
+|   |-- validation_metrics.csv
+|   `-- weekly_performance_summary.csv
 |-- tests/
 |   |-- conftest.py
 |   |-- test_data_loader.py
 |   |-- test_evaluate.py
+|   |-- test_inference.py
+|   |-- test_monitoring.py
 |   |-- test_preprocess.py
 |   `-- test_train_model.py
 `-- src/
+    |-- __init__.py
+    |-- build_mlruns_readable_view.py
     |-- data_loader.py
     |-- evaluate.py
+    |-- inference.py
+    |-- monitoring.py
     |-- preprocess.py
     `-- train_model.py
 ```
