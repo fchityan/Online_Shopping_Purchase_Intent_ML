@@ -4,6 +4,7 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from starlette.responses import RedirectResponse
 
 from src.inference import build_prediction_response
 
@@ -24,6 +25,11 @@ class PredictionRequest(BaseModel):
 class PredictionPayload(BaseModel):
     score: float = Field(..., ge=0.0, le=1.0)
     prediction: int
+
+
+@app.get('/')
+def root() -> RedirectResponse:
+    return RedirectResponse(url='/docs')
 
 
 @app.get('/health')
