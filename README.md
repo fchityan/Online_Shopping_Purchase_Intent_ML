@@ -1,5 +1,20 @@
 # Online Shopping Purchase Intent ML
 
+<!-- portfolio-summary:start -->
+## Portfolio Snapshot
+
+**Problem:** Imbalanced browsing sessions make purchase intent difficult to detect while balancing missed purchasers against false positives.
+
+**Method:** Built stratified train/validation/test preprocessing, compared Logistic Regression, Random Forest, and LightGBM by validation AUC, tuned the operating threshold, and tracked experiments with MLflow.
+
+**Output:** A LightGBM final model with held-out evaluation, threshold analysis, feature importance, FastAPI/Docker serving, and lightweight drift, data-quality, and business-impact monitoring.
+
+**Evidence:** Held-out test AUC **0.9253** at both the default and tuned operating thresholds.
+
+**Portfolio stack:** Python · LightGBM · Random Forest · Logistic Regression · MLflow · FastAPI
+
+<!-- portfolio-summary:end -->
+
 An end-to-end machine learning pipeline for predicting customer purchase intent from online session behavior data.
 
 ## Overview
