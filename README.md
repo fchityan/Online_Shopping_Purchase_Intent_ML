@@ -1,194 +1,99 @@
-# Online Shopping Purchase Intent ML
+# Online Shopping Purchase Intent ML — Production Service
 
-<!-- portfolio-summary:start -->
+An end-to-end imbalanced-classification system for predicting online purchase intent, with reproducible model selection, threshold tuning, experiment tracking, deployable model packaging, API serving, monitoring, and containerization.
+
 ## Portfolio Snapshot
 
-**Problem:** Imbalanced browsing sessions make purchase intent difficult to detect while balancing missed purchasers against false positives.
+**Problem:** Purchase sessions are imbalanced, so a useful decision system must balance missed purchasers against unnecessary targeting.
 
-**Method:** Built stratified train/validation/test preprocessing, compared Logistic Regression, Random Forest, and LightGBM by validation AUC, tuned the operating threshold, and tracked experiments with MLflow.
+**Method:** Stratified train/validation/test splitting, shared preprocessing, Logistic Regression / Random Forest / LightGBM comparison, validation-only threshold tuning, and MLflow experiment tracking.
 
-**Output:** A LightGBM final model with held-out evaluation, threshold analysis, feature importance, FastAPI/Docker serving, and lightweight drift, data-quality, and business-impact monitoring.
+**Production output:** A versioned model bundle that contains preprocessing + classifier + operating threshold + schema, a FastAPI service with liveness/readiness/metadata endpoints, bounded batch inference, Docker deployment, and lightweight drift/data-quality/business monitoring.
 
-**Evidence:** Held-out test AUC **0.9253** at both the default and tuned operating thresholds.
+**Evidence:** The existing locked test evaluation reports AUC **0.9253** for the selected LightGBM model. Threshold choice changes the precision/recall trade-off without changing ranking AUC.
 
-**Portfolio stack:** Python · LightGBM · Random Forest · Logistic Regression · MLflow · FastAPI
+**Stack:** Python · scikit-learn · LightGBM · MLflow · FastAPI · Docker
 
-<!-- portfolio-summary:end -->
-
-An end-to-end machine learning pipeline for predicting customer purchase intent from online session behavior data.
-
-## Overview
-
-This project builds and evaluates a binary classification pipeline for purchase intent prediction. The workflow covers data loading, domain-aware cleaning, preprocessing, model selection, threshold tuning, and final evaluation on a held-out test set.
-
-This project includes the full core pipeline stages:
-
-- data ingestion and validation
-- preprocessing and feature handling
-- model training and selection
-- threshold tuning and offline evaluation
-- experiment tracking with MLflow
-- inference serving API and containerization
-- lightweight monitoring outputs (drift, data quality, weekly metrics, business impact)
-
-The pipeline is designed for imbalanced classification, so it tracks both ranking quality and business-facing classification metrics:
-
-- AUC
-- F1 score
-- Precision
-- Recall
-- Accuracy
-- Confusion matrix
-
-It also now includes a lightweight monitoring layer for drift, data quality, weekly performance reporting, and a simple business-impact summary.
-
-## Project Structure
+## Production architecture
 
 ```text
-online_shopping_purchase_intent_ml/
-|-- app.py
-|-- Dockerfile
-|-- README.md
-|-- requirements.txt
-|-- online_shopping_purchase_intent_ml.ipynb
-|-- mlruns_readable_view/
-|-- outputs/
-|   |-- business_impact.csv
-|   |-- data_quality_alerts.json
-|   |-- drift_report.json
-|   |-- feature_importance.csv
-|   |-- summary.json
-|   |-- threshold_tuning.csv
-|   |-- validation_metrics.csv
-|   `-- weekly_performance_summary.csv
-|-- tests/
-|   |-- conftest.py
-|   |-- test_data_loader.py
-|   |-- test_evaluate.py
-|   |-- test_inference.py
-|   |-- test_monitoring.py
-|   |-- test_preprocess.py
-|   `-- test_train_model.py
-`-- src/
-    |-- __init__.py
-    |-- build_mlruns_readable_view.py
-    |-- data_loader.py
-    |-- evaluate.py
-    |-- inference.py
-    |-- monitoring.py
-    |-- preprocess.py
-    `-- train_model.py
+raw session data
+      │
+      ▼
+domain validation / cleaning
+      │
+      ▼
+stratified train / validation / test
+      │
+      ├── Logistic Regression
+      ├── Random Forest
+      └── LightGBM
+      │
+      ▼
+validation model selection + threshold tuning
+      │
+      ▼
+locked holdout evaluation
+      │
+      ├── MLflow run + metrics
+      ├── monitoring outputs
+      └── outputs/model_bundle.joblib
+                    │
+                    ▼
+             FastAPI / Docker
 ```
 
-## Pipeline Flow
+The serving artifact is no longer just a classifier. `model_bundle.joblib` stores the fitted preprocessing/model pipeline together with:
 
-1. Load the raw dataset.
-2. Apply domain cleaning and prepare the target column.
-3. Split data into train, validation, and test sets with stratification.
-4. Build a preprocessing pipeline for numeric and categorical features.
-5. Train multiple baseline models.
-6. Select the best model by validation AUC.
-7. Tune the classification threshold for the best validation F1 score.
-8. Retrain on train+validation data and evaluate on the untouched test set.
-9. Save metrics and artifacts into the `outputs/` directory.
+- selected model name and human-readable label
+- model version and creation timestamp
+- tuned operating threshold
+- expected feature columns
+- target column and random state
+- locked test metrics
 
-## Models
+This prevents the API from silently reverting to a hard-coded `0.50` threshold after training.
 
-The training script currently compares these classifiers:
-
-- Logistic Regression
-- LightGBM Classifier
-- Random Forest Classifier
-
-## Installation
-
-Create a virtual environment and install dependencies:
+## Train
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python -m src.train_model \
+  --data-path online_shopping.csv \
+  --output-dir outputs \
+  --random-state 42 \
+  --mlflow-tracking-uri file:./mlruns_purchase_intent \
+  --experiment-name purchase-intent-lightgbm
 ```
 
-## Usage
-
-Run the full training and evaluation pipeline:
-
-```bash
-python -m src.train_model --data-path online_shopping.csv --output-dir outputs --random-state 42 --mlflow-tracking-uri file:./mlruns_purchase_intent --experiment-name purchase-intent-lightgbm
-```
-
-Arguments:
-
-- `--data-path`: path to the input CSV dataset
-- `--output-dir`: directory for generated metrics and artifacts
-- `--random-state`: random seed for reproducibility
-- `--mlflow-tracking-uri`: location for MLflow experiment tracking
-- `--experiment-name`: MLflow experiment name
-
-## Tests
-
-Run the test suite with:
-
-```bash
-pytest
-```
-
-The tests cover data loading, preprocessing, evaluation, selected training helpers, and the new inference API scaffolding.
-
-## Production-Ready Starter Components
-
-This repository now includes a lightweight production-ready foundation:
-
-- A prediction API entry point in [app.py](app.py)
-- A reusable inference module in [src/inference.py](src/inference.py)
-- A Docker image in [Dockerfile](Dockerfile)
-- A CI workflow in [.github/workflows/ci.yml](.github/workflows/ci.yml)
-
-### Run the API locally
-
-```bash
-uvicorn app:app --reload
-```
-
-Then open the Swagger docs at:
+The pipeline writes:
 
 ```text
-http://127.0.0.1:8000/docs
+outputs/
+├── model_bundle.joblib
+├── summary.json
+├── validation_metrics.csv
+├── threshold_tuning.csv
+├── feature_importance.csv
+├── weekly_performance_summary.csv
+├── data_quality_alerts.json
+├── drift_report.json
+└── business_impact.csv
 ```
 
-### Build the Docker image
+## Model selection and operating threshold
 
-```bash
-docker build -t purchase-intent-api .
-```
+Candidate models:
 
-### Run the Docker container
+- Logistic Regression
+- Random Forest
+- LightGBM
 
-```bash
-docker run -p 8000:8000 purchase-intent-api
-```
+The best model is selected by validation AUC. The operating threshold is then tuned only on the validation split for F1. The untouched test split is evaluated after model and threshold selection are locked.
 
-`tests/conftest.py` is included so `pytest` can import the top-level `src` package reliably in this repo layout.
-
-`__pycache__/` directories are generated automatically by Python. They are not source files and should not be committed.
-
-## Outputs
-
-After a successful run, the pipeline writes these files to `outputs/`:
-
-- `validation_metrics.csv`: validation performance for each candidate model
-- `threshold_tuning.csv`: threshold search results for the selected model
-- `feature_importance.csv`: feature importances when supported by the final model
-- `summary.json`: run summary, split sizes, selected model, threshold, and final test metrics
-- `weekly_performance_summary.csv`: simple weekly performance summary table
-- `data_quality_alerts.json`: basic missingness and invalid-range alerts
-- `drift_report.json`: simple drift summary for numeric and categorical features
-- `business_impact.csv`: simple business-impact view showing targeted vs non-targeted conversion behavior
-
-## Reported Performance
-
-Validation performance at threshold 0.50 for the three candidate models is:
+Existing recorded validation results at threshold `0.50`:
 
 | Model | AUC | F1 | Precision | Recall | Accuracy |
 |---|---:|---:|---:|---:|---:|
@@ -196,70 +101,116 @@ Validation performance at threshold 0.50 for the three candidate models is:
 | Random Forest | 0.9203 | 0.6842 | 0.8340 | 0.5801 | 0.9173 |
 | Logistic Regression | 0.8599 | 0.5361 | 0.7761 | 0.4094 | 0.8905 |
 
-Best model selection:
+Existing locked test results:
 
-- We choose **LightGBM** because it has the highest validation AUC and F1, giving the strongest overall ranking quality and class balance.
-- Random Forest is competitive, but its lower recall means more missed purchasing sessions.
-- Logistic Regression underperforms on both AUC and F1, which suggests it is not flexible enough for the observed nonlinear behavior.
-
-### Default threshold: 0.50
-
+**Threshold 0.50**
 - AUC: 0.9253
 - F1: 0.6933
 - Precision: 0.7986
 - Recall: 0.6126
 - Accuracy: 0.9161
 
-### Tuned threshold: 0.35
-
+**Threshold 0.35**
 - AUC: 0.9253
 - F1: 0.6799
 - Precision: 0.6900
 - Recall: 0.6702
 - Accuracy: 0.9023
 
-The tuned threshold improves recall and F1, which is often preferable in imbalanced purchase-intent classification.
+The lower threshold captures more potential purchasers at the cost of more false positives. The serving API uses the threshold stored with the promoted artifact rather than a hard-coded value.
 
-## Monitoring and Business Evaluation
+## Serve
 
-The project now includes a lightweight monitoring layer with the following first-version checks:
-
-- Drift checks for key numerical and categorical features such as `PageValue`, `BounceRate`, `ExitRate`, and `CustomerType`
-- Basic data quality alerts for missing values and out-of-range bounded features
-- A simple weekly performance summary table for tracking accuracy, precision, recall, and F1
-- A business-impact table that summarizes targeted versus non-targeted conversion rates
-
-These outputs are designed as a practical starting point for ongoing monitoring and business evaluation rather than a full production observability stack.
-
-## Readable MLflow Folder View
-
-MLflow stores experiments and runs using internal IDs (for example `0`, `145447...`, and long run UUIDs). Renaming those folders directly can break MLflow metadata.
-
-To get human-readable names safely, generate a symlinked readable view:
+After training:
 
 ```bash
-python -m src.build_mlruns_readable_view
+uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
-This creates [mlops](mlops) with friendly names such as:
+Endpoints:
 
-- `experiment__purchase_intent_lightgbm__id_145447...`
-- `run__<start_time>__lgbm_baseline_threshold_0_35_seed_42__id_<run_id>`
+```text
+GET  /
+GET  /live
+GET  /health      # backward-compatible liveness alias
+GET  /ready
+GET  /metadata
+POST /predict
+```
 
-## Deployment Considerations
+`/live` answers whether the service process is alive. `/ready` answers whether the model artifact has loaded successfully. This keeps process health separate from model readiness.
 
-- Validate the incoming scoring schema so feature names, data types, and categorical formats match the training pipeline.
-- Enforce domain checks on bounded fields such as `BounceRate`, `ExitRate`, and `SpecialDayProximity` before inference.
-- Reuse the same preprocessing logic in production to avoid training-serving skew.
-- Monitor null rates and unexpected category values for `CustomerType`, `TrafficSource`, and `GeographicRegion`.
-- Track drift in high-impact numerical features such as `PageValue` and `ProductPageTime`.
-- Choose the operating threshold based on business goals: the default threshold favors precision, while the tuned threshold improves recall.
-- Log prediction scores, final class decisions, and downstream outcomes so model quality can be recalibrated over time.
-- Retrain and retune the threshold periodically when traffic patterns, customer behavior, or campaign sources change.
+`MODEL_PATH` defaults to `outputs/model_bundle.joblib`. `MAX_BATCH_SIZE` defaults to 100.
 
-## Notes
+Example scoring payload:
 
-- Missing values are handled during loading and preprocessing.
-- Threshold tuning is based on validation-set F1.
-- The final evaluation is performed on a held-out test split.
-- `online_shopping_purchase_intent_ml.ipynb` contains exploratory analysis and supporting observations.
+```json
+[
+  {
+    "CustomerType": "returning_visitor",
+    "SpecialDayProximity": 0.0,
+    "ExitRate": 0.12,
+    "PageValue": 8.4,
+    "TrafficSource": 2,
+    "GeographicRegion": 1,
+    "BounceRate": 0.04,
+    "ProductPageTime": 520.0
+  }
+]
+```
+
+The response includes score, binary decision, threshold, model name, and model version.
+
+## Docker
+
+```bash
+docker build -t purchase-intent-api .
+docker run --rm -p 8000:8000 -v "$PWD/outputs:/app/outputs:ro" purchase-intent-api
+```
+
+The container runs as a non-root user and includes a liveness health check.
+
+## Monitoring
+
+The project writes lightweight production monitoring artifacts for:
+
+- missingness and invalid-range data-quality alerts
+- numeric and categorical drift
+- weekly accuracy / precision / recall / F1 summaries
+- targeted vs non-targeted conversion behavior
+
+These are local reference implementations rather than a replacement for managed observability, alert routing, or feature-store monitoring.
+
+## Tests
+
+```bash
+pytest -q
+```
+
+The existing suite covers data loading, preprocessing, evaluation, inference, monitoring, and training helpers.
+
+## Repository structure
+
+```text
+.
+├── app.py
+├── Dockerfile
+├── README.md
+├── requirements.txt
+├── eda.ipynb
+├── src/
+│   ├── data_loader.py
+│   ├── evaluate.py
+│   ├── inference.py
+│   ├── monitoring.py
+│   ├── preprocess.py
+│   └── train_model.py
+├── tests/
+└── outputs/
+```
+
+## Production boundary
+
+The repository now demonstrates the application-level pieces of production ML: reproducible training, artifact promotion, train/serve consistency, health/readiness semantics, input validation, versioned responses, bounded batch scoring, Docker packaging, tests, and monitoring outputs.
+
+A real production deployment would still add authentication, rate limiting at the gateway, centralized structured logging, metrics/trace export, secrets management, a managed model registry, automated canary/rollback, scheduled retraining, and live outcome feedback.
