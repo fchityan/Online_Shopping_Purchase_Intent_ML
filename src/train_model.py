@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from dataclasses import dataclass
@@ -173,7 +174,14 @@ def _save_serving_bundle(
         "random_state": config.random_state,
         "test_metrics": test_metrics,
     }
-    joblib.dump(bundle, config.output_dir / "model_bundle.joblib")
+    model_path = config.output_dir / "model_bundle.joblib"
+    joblib.dump(bundle, model_path)
+
+    digest = hashlib.sha256()
+    with model_path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    bundle["artifact_sha256"] = digest.hexdigest()
     return bundle
 
 
@@ -265,9 +273,23 @@ def run(config: PipelineConfig):
         "test_tuned": test_tuned,
         "serving_artifact": "model_bundle.joblib",
         "model_version": bundle["model_version"],
+        "model_sha256": bundle["artifact_sha256"],
     }
     with (config.output_dir / "summary.json").open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2)
+
+    deployment_manifest = {
+        "model_name": bundle["model_name"],
+        "model_display_name": bundle["model_display_name"],
+        "model_version": bundle["model_version"],
+        "model_sha256": bundle["artifact_sha256"],
+        "threshold": float(bundle["threshold"]),
+        "created_at_utc": bundle["created_at_utc"],
+        "stage": "candidate",
+        "promotion_note": "Promote this immutable artifact only after reviewing validation/test and business-impact outputs.",
+    }
+    with (config.output_dir / "deployment_manifest.json").open("w", encoding="utf-8") as handle:
+        json.dump(deployment_manifest, handle, indent=2)
 
     weekly_metrics = pd.DataFrame(
         [{"week": "current", **{key: float(test_tuned[key]) for key in ["accuracy", "precision", "recall", "f1"]}}]
