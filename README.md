@@ -209,8 +209,12 @@ The existing suite covers data loading, preprocessing, evaluation, inference, mo
 └── outputs/
 ```
 
+## Production hardening layer
+
+The service now adds API-key authentication, SHA-256 model verification, JSON request logs, request IDs, Prometheus metrics, environment-controlled documentation, immutable deployment manifests, CI container builds, Kubernetes probes/autoscaling/disruption controls, and production runbook/security guidance.
+
+See `docs/production_runbook.md`, `deploy/kubernetes.yaml`, `.env.example`, and `SECURITY.md`.
+
 ## Production boundary
 
-The repository now demonstrates the application-level pieces of production ML: reproducible training, artifact promotion, train/serve consistency, health/readiness semantics, input validation, versioned responses, bounded batch scoring, Docker packaging, tests, and monitoring outputs.
-
-A real production deployment would still add authentication, rate limiting at the gateway, centralized structured logging, metrics/trace export, secrets management, a managed model registry, automated canary/rollback, scheduled retraining, and live outcome feedback.
+This is intentionally close to the **application and MLOps layer** of a real production purchase-intent service. It is still not a live enterprise production system until it runs on real traffic with real campaign decisions, delayed conversion labels, cloud IAM/secrets, centralized telemetry, a managed model registry, alert routing, canary/rollback execution, and operational ownership.
