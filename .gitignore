@@ -16,3 +16,6 @@ mlops/
 
 # Local outputs and artifacts
 outputs/
+
+# Personal editor settings
+.vscode/
