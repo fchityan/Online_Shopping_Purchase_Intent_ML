@@ -201,7 +201,7 @@ The existing suite covers data loading, preprocessing, evaluation, inference, mo
 ├── Dockerfile
 ├── README.md
 ├── requirements.txt
-├── eda.ipynb
+├── data-discovery-and-insights/customer-journey-and-conversion-propensity.ipynb
 ├── src/
 │   ├── data_loader.py
 │   ├── evaluate.py

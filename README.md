@@ -61,7 +61,7 @@ See the [requirements and solution-design assessment](docs/business-analysis/bus
 - [Business requirements, solution design and AI-governance documentation](docs/README.md)
 - [MLflow model-assurance experiment evidence](model-assurance/mlflow-experiment-evidence/)
 
-- [Exploratory notebook](eda.ipynb)
+- [Exploratory notebook](data-discovery-and-insights/customer-journey-and-conversion-propensity.ipynb)
 - [Technical guide — model results, commands, and architecture](docs/solution-design/solution-design-and-implementation-guide.md)
 - [Deployment and operations notes](docs/operational-readiness/service-transition-and-operations-runbook.md)
 - [Security guidance](SECURITY.md)
