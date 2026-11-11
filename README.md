@@ -1,4 +1,4 @@
-# Online Shopping Purchase Intent ML — Production Service
+# Online Shopping Purchase Intent ML
 
 An end-to-end imbalanced-classification system for predicting online purchase intent, with reproducible model selection, threshold tuning, experiment tracking, deployable model packaging, API serving, monitoring, and containerization.
 
