@@ -1,4 +1,4 @@
-# Online Shopping Purchase Intent ML
+# Customer Purchase Intent & Conversion Analytics
 
 ## Project Overview
 
