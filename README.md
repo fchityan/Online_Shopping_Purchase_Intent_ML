@@ -214,7 +214,3 @@ The existing suite covers data loading, preprocessing, evaluation, inference, mo
 The service now adds API-key authentication, SHA-256 model verification, JSON request logs, request IDs, Prometheus metrics, environment-controlled documentation, immutable deployment manifests, CI container builds, Kubernetes probes/autoscaling/disruption controls, and production runbook/security guidance.
 
 See `docs/production_runbook.md`, `deploy/kubernetes.yaml`, `.env.example`, and `SECURITY.md`.
-
-## Production boundary
-
-This is intentionally close to the **application and MLOps layer** of a real production purchase-intent service. It is still not a live enterprise production system until it runs on real traffic with real campaign decisions, delayed conversion labels, cloud IAM/secrets, centralized telemetry, a managed model registry, alert routing, canary/rollback execution, and operational ownership.
