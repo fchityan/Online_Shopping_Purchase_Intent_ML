@@ -31,7 +31,11 @@ These results apply to the evaluated dataset, **not proof of improved real-world
 
 ## Technology Stack
 
-**Python · scikit-learn · LightGBM · MLflow · FastAPI · Docker · pytest**
+- **Language and analysis:** Python, NumPy, pandas, Jupyter Notebook, Matplotlib, Seaborn
+- **Machine learning:** scikit-learn (Logistic Regression, Random Forest, preprocessing/evaluation), LightGBM, joblib
+- **Experiment and data tools:** MLflow, SQLAlchemy and SQLite (declared data/experiment dependencies)
+- **API and monitoring:** FastAPI, Uvicorn, Pydantic, Prometheus Python client, data-quality/drift reporting
+- **Deployment and testing:** Docker, Kubernetes, GitHub Actions CI, pytest
 
 ## Explore the Project
 
