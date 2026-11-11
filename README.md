@@ -42,6 +42,7 @@ See the [requirements and solution-design assessment](docs/business-analysis/bus
 | Existing folder/file | Business or delivery role |
 |---|---|
 | `app.py` | Scoring API and solution integration |
+| `data-discovery-and-insights/` | Customer journey analysis, data profiling and conversion-propensity investigation |
 | `src/` | Data transformation and propensity-model lifecycle |
 | `tests/` | Automated processing and prediction checks |
 | `outputs/` | Performance evidence, KPI and monitoring artefacts |
