@@ -29,26 +29,6 @@ The recorded **LightGBM locked-test ROC-AUC is 0.9253**. At a decision threshold
 
 These results apply to the evaluated dataset, **not proof of improved real-world conversions or campaign returns**.
 
-## Business Analysis, Digital Transformation & AI Enablement
-
-- **Business analysis:** Define propensity scoring, campaign KPI requirements and precision–recall trade-offs.
-- **Digital transformation:** Map shopping-session data → scoring API → potential targeting and monitoring workflows.
-- **AI enablement:** Link validation, threshold selection, experiment tracking and model governance evidence.
-
-See the [requirements and solution-design assessment](docs/business-analysis/business-requirements-and-solution-design.md) and [AI readiness / governance assessment](docs/ai-enablement/ai-readiness-and-model-governance-assessment.md). They are project analysis documents, not claims of signed-off UAT.
-
-### Folder guide
-
-| Existing folder/file | Business or delivery role |
-|---|---|
-| `app.py` | Scoring API and solution integration |
-| `data-discovery-and-insights/` | Customer journey analysis, data profiling and conversion-propensity investigation |
-| `src/` | Data transformation and propensity-model lifecycle |
-| `tests/` | Automated processing and prediction checks |
-| `outputs/` | Performance evidence, KPI and monitoring artefacts |
-| `deployment-architecture/` | Deployment architecture and service readiness |
-| `docs/` | Business requirements, solution design and AI governance |
-
 ## Technology Stack
 
 - **Language and analysis:** Python, NumPy, pandas, Jupyter Notebook, Matplotlib, Seaborn
