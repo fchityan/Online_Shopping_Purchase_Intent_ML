@@ -1,4 +1,4 @@
-# AI Enablement Readiness & Governance — Online Shopping Purchase Intent ML
+# AI Readiness & Model Governance Assessment — Online Shopping Purchase Intent ML
 
 ## Model evidence
 
@@ -21,4 +21,4 @@ These measures describe the evaluated dataset, **not incremental campaign conver
 
 **Boundary:** A validated test AUC does not demonstrate that targeting policies improve business results.
 
-See [requirements and solution design](../business-analysis/requirements-and-solution-design.md).
+See [requirements and solution design](../business-analysis/business-requirements-and-solution-design.md).

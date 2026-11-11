@@ -35,7 +35,7 @@ These results apply to the evaluated dataset, **not proof of improved real-world
 - **Digital transformation:** Map shopping-session data → scoring API → potential targeting and monitoring workflows.
 - **AI enablement:** Link validation, threshold selection, experiment tracking and model governance evidence.
 
-See the [requirements and solution-design assessment](docs/business-analysis/requirements-and-solution-design.md) and [AI readiness / governance assessment](docs/ai-enablement/readiness-and-governance.md). They are project analysis documents, not claims of signed-off UAT.
+See the [requirements and solution-design assessment](docs/business-analysis/business-requirements-and-solution-design.md) and [AI readiness / governance assessment](docs/ai-enablement/ai-readiness-and-model-governance-assessment.md). They are project analysis documents, not claims of signed-off UAT.
 
 ### Folder guide
 
@@ -45,8 +45,8 @@ See the [requirements and solution-design assessment](docs/business-analysis/req
 | `src/` | Data transformation and propensity-model lifecycle |
 | `tests/` | Automated processing and prediction checks |
 | `outputs/` | Performance evidence, KPI and monitoring artefacts |
-| `deploy/` | Deployment architecture and service readiness |
-| `docs/` | Requirements, technical design and AI governance |
+| `deployment-architecture/` | Deployment architecture and service readiness |
+| `docs/` | Business requirements, solution design and AI governance |
 
 ## Technology Stack
 
@@ -58,9 +58,12 @@ See the [requirements and solution-design assessment](docs/business-analysis/req
 
 ## Explore the Project
 
+- [Business requirements, solution design and AI-governance documentation](docs/README.md)
+- [MLflow model-assurance experiment evidence](model-assurance/mlflow-experiment-evidence/)
+
 - [Exploratory notebook](eda.ipynb)
-- [Technical guide — model results, commands, and architecture](docs/technical_guide.md)
-- [Deployment and operations notes](docs/production_runbook.md)
+- [Technical guide — model results, commands, and architecture](docs/solution-design/solution-design-and-implementation-guide.md)
+- [Deployment and operations notes](docs/operational-readiness/service-transition-and-operations-runbook.md)
 - [Security guidance](SECURITY.md)
 
 To reproduce training, supply a compatible shopping-session CSV and follow the instructions in the technical guide.

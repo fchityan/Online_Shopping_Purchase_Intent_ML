@@ -1,4 +1,4 @@
-# Business Requirements & Solution Design — Online Shopping Purchase Intent ML
+# Business Requirements & Solution Design Specification — Online Shopping Purchase Intent ML
 
 A project-level **business requirements and solution-design record**, not a stakeholder-approved BRD or completed UAT.
 
@@ -27,4 +27,4 @@ These are **proposed acceptance checks**, not customer UAT.
 
 A business pilot should define customer consent, conversion-event definitions, targeting constraints, A/B test design, incremental conversion, campaign cost and operational owners. Model AUC alone does not establish commercial value.
 
-See [AI readiness](../ai-enablement/readiness-and-governance.md).
+See [AI readiness](../ai-enablement/ai-readiness-and-model-governance-assessment.md).

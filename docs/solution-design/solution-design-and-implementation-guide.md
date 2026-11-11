@@ -1,6 +1,6 @@
-# Online Shopping Purchase Intent ML — Technical Guide
+# Solution Design & Implementation Guide — Online Shopping Purchase Intent
 
-This guide preserves the detailed implementation, model workflow, evaluation, deployment notes, and run commands previously included in the root README. Commands and file paths are relative to the repository root. For a concise summary, see the [project overview](../README.md).
+This guide preserves the detailed implementation, model workflow, evaluation, deployment notes, and run commands previously included in the root README. Commands and file paths are relative to the repository root. For a concise summary, see the [project overview](../../README.md).
 
 ---
 
@@ -217,4 +217,4 @@ The existing suite covers data loading, preprocessing, evaluation, inference, mo
 
 The service now adds API-key authentication, SHA-256 model verification, JSON request logs, request IDs, Prometheus metrics, environment-controlled documentation, immutable deployment manifests, CI container builds, Kubernetes probes/autoscaling/disruption controls, and production runbook/security guidance.
 
-See `docs/production_runbook.md`, `deploy/kubernetes.yaml`, `.env.example`, and `SECURITY.md`.
+See `docs/operational-readiness/service-transition-and-operations-runbook.md`, `deployment-architecture/kubernetes.yaml`, `.env.example`, and `SECURITY.md`.
