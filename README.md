@@ -39,7 +39,7 @@ These results apply to the evaluated dataset, **not proof of improved real-world
 
 ## Explore the Project
 
-- [Business requirements, solution design and AI-governance documentation](docs/README.md)
+- [Purchase intent — business analysis, ML solution design and operational readiness](docs/README.md)
 - [MLflow model-assurance experiment evidence](model-assurance/mlflow-experiment-evidence/)
 
 - [Exploratory notebook](data-discovery-and-insights/customer-journey-and-conversion-propensity.ipynb)
