@@ -1,4 +1,4 @@
-# Purchase Intent Analytics — Enterprise Documentation Reference Pack
+# Purchase Intent Analytics
 
 **Status:** ML portfolio reference. A recorded held-out ROC-AUC is available for the evaluated dataset; **no proven campaign uplift, signed BRD/UAT or live commercial activation** is claimed.
 
