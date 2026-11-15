@@ -37,6 +37,10 @@ These results apply to the evaluated dataset, **not proof of improved real-world
 - **API and monitoring:** FastAPI, Uvicorn, Pydantic, Prometheus Python client, data-quality/drift reporting
 - **Deployment and testing:** Docker, Kubernetes, GitHub Actions CI, pytest
 
+## Enterprise-Style Documentation (Reference; Not Business Approval)
+
+[Business requirements, solution/data architecture, model assurance, privacy, security and operating controls](docs/enterprise/README.md). This package does not imply customer UAT, campaign uplift, or live commercial deployment.
+
 ## Explore the Project
 
 - [Purchase intent — business analysis, ML solution design and operational readiness](docs/README.md)
