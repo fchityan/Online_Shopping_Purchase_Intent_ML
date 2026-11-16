@@ -65,7 +65,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python -m src.train_model \
-  --data-path online_shopping.csv \
+  --data-path $SHOPPING_DATA_PATH \
   --output-dir outputs \
   --random-state 42 \
   --mlflow-tracking-uri file:./mlruns_purchase_intent \

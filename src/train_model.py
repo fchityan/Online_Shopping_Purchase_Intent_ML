@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -34,7 +35,7 @@ from src.preprocess import build_preprocessor, domain_clean, get_feature_types, 
 
 @dataclass
 class PipelineConfig:
-    data_path: Path = Path("online_shopping.csv")
+    data_path: Path = Path(os.environ.get("SHOPPING_DATA_PATH", "data/private_input"))
     target_col: str = "PurchaseCompleted"
     test_size: float = 0.2
     val_size_within_trainval: float = 0.25
@@ -144,7 +145,7 @@ def resolve_artifact_location(tracking_uri: str, experiment_name: str) -> str:
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(description="Run end-to-end purchase intent ML pipeline.")
-    parser.add_argument("--data-path", default="online_shopping.csv")
+    parser.add_argument("--data-path", default=os.environ.get("SHOPPING_DATA_PATH", "data/private_input"))
     parser.add_argument("--output-dir", default="outputs")
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument("--mlflow-tracking-uri", default="file:./mlruns_purchase_intent")

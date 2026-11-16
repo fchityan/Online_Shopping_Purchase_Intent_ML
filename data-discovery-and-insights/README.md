@@ -6,8 +6,8 @@ The exploratory analysis investigates shopping-session features and potential pu
 
 ## Input and reproducibility
 
-- The notebook loads `online_shopping.csv` relative to its **working directory**. Supply a compatible dataset locally; it is not committed here.
-- The application training workflow runs from the repository root using `src/train_model.py`; its default input file is also named `online_shopping.csv`.
+- Set `SHOPPING_DATA_PATH` to an authorised local dataset path; the notebook loads that environment-configured file. Supply a compatible dataset locally; it is not committed here.
+- The application training workflow runs from the repository root using `src/train_model.py`; its input path may be supplied with `--data-path` or the `SHOPPING_DATA_PATH` environment variable.
 - Data cleaning, validation and model comparison are documented in the [Implementation Guide](../docs/solution-design/solution-design-and-implementation-guide.md).
 - Recorded model evaluation results do not demonstrate incremental campaign conversions or financial ROI.
 
